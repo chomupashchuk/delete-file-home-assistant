@@ -3,7 +3,7 @@ Delete file service for home Assistant. For example delete snapshots.
 
 
 ## Integration installation
-In `/config` folder create `custom_components` folder and load source file in it. In 'configuration.yaml' include:
+In `/config` folder create `custom_components` folder and load source files folder `delete` in it. In 'configuration.yaml' include:
 ```
 delete:
 ```
