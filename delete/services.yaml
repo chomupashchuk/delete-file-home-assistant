@@ -1,0 +1,6 @@
+file:
+  description: Delete the file
+  fields:
+    file:
+      description: File to be deleted
+      example: '/config/snapshot.jpg'
