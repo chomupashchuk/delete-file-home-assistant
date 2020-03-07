@@ -4,3 +4,12 @@ file:
     file:
       description: File to be deleted
       example: '/config/snapshot.jpg'
+files_in_folder:
+  description: Delete files within the folder, where files are older then defined period of time
+  fields:
+    folder:
+      description: Folder to be scanned for the files
+      example: '/config/snapshots'
+    time:
+      description: Threshold for how old files are (in seconds). Default is 3600 seconds.
+      example: 86400
