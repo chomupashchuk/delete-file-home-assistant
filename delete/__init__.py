@@ -9,7 +9,7 @@ SERVICE_FILE = "file"
 SERVICE_FOLDER = "files_in_folder"
 DEFAULT_FILE = ""
 DEFAULT_FOLDER = ""
-DEFAULT_TIME = 3600
+DEFAULT_TIME = 86400
 DOMAIN = "delete"
 
 _LOGGER = logging.getLogger(__name__)
