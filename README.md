@@ -9,7 +9,7 @@ delete:
 ```
 
 ## Services
-### delete.file
+### Service: delete.file
 `delete.file` is used to delete a file.
 
 #### attributes:
@@ -22,7 +22,7 @@ data:
   file: '/config/image_snapshot/photo.png'
 ```
 
-### delete.files_in_folder
+### Service: delete.files_in_folder
 `delete.files_in_folder` is used to delete a files within the folder, where files are older than specified period of time in seconds (default is 1 hour).
 
 #### attributes:
