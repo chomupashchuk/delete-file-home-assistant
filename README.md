@@ -13,7 +13,7 @@ delete:
 `delete.file` is used to delete a file.
 
 #### attributes:
-- `file` is used to indicate file path.
+- `file` is used to indicate file path. it is a mandatory attribute.
 
 #### Example
 ```
@@ -26,8 +26,8 @@ data:
 `delete.files_in_folder` is used to delete a files within the folder, where files are older than specified period of time in seconds (default is 1 hour).
 
 #### attributes:
-- `folder` is used to indicate folder path.
-- `time` is used to indicate how old files must be to be deleted in seconds. Default is 1 hour (3600 seconds).
+- `folder` is used to indicate folder path. it is a mandatory attribute.
+- `time` is used to indicate how old files must be to be deleted in seconds. Default is 1 hour (3600 seconds). It is an optional attribute.
 
 #### Example
 ```
