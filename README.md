@@ -27,12 +27,12 @@ data:
 
 #### attributes:
 - `folder` is used to indicate folder path. it is a mandatory attribute.
-- `time` is used to indicate how old files must be to be deleted in seconds. Default is 1 hour (3600 seconds). It is an optional attribute.
+- `time` is used to indicate how old files must be to be deleted in seconds. Default is 24 hours (86400 seconds). It is an optional attribute.
 
 #### Example
 ```
 service: delete.files_in_folder
 data:
   folder: '/config/image_snapshot/'
-  time: 86400
+  time: 604800
 ```
