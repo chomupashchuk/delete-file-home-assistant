@@ -54,6 +54,7 @@ data:
 service: delete.files_in_folder
 data:
   folder: '/config/image_snapshot/'
+  time: 24000
   except_extensions:
     - '.zip'
     - '.yaml'
