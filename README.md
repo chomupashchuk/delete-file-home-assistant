@@ -1,5 +1,5 @@
 # Delete files in Home Assistant
-Delete file service for home Assistant. For example delete snapshots.
+Delete file service for Home Assistant. For example delete snapshots.
 
 
 ## Integration installation
