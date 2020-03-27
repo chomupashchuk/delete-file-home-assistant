@@ -23,11 +23,11 @@ data:
 ```
 
 ### Service: delete.files_in_folder
-`delete.files_in_folder` is used to delete a files within the folder, where files are older than specified period of time in seconds (default is 24 hours).
+`delete.files_in_folder` is used to delete files within the folder, where files shall be deleted if they are older than specified period of time in seconds (default is 24 hours).
 
 #### attributes:
 - `folder` is used to indicate folder path. it is a mandatory attribute.
-- `time` is used to indicate how old files must be to be deleted in seconds. Default is 24 hours (86400 seconds). It is an optional attribute.
+- `time` is used to indicate how old files must be  in seconds in order to be deleted. Default is 24 hours (86400 seconds). It is an optional attribute.
 
 #### Example
 ```
