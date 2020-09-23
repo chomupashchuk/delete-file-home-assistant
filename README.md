@@ -30,6 +30,9 @@ data:
 - `time` is used to indicate how old files must be  in seconds in order to be deleted. Default is 24 hours (86400 seconds). It is an optional attribute.
 - `only_extensions` is list of extensions of files that are allowed to be deleted. Cannot be used together with `except_extensions`. It is an optional attribute.
 - `except_extensions` is list of extensions of files that are not allowed to be deleted. Cannot be used together with `only_extensions`. It is an optional attribute.
+- `except_files` is list of files that are not allowed to be deleted. It is an optional attribute.
+- `scan_subfolders` Indicates if subfolders to be scanned (default is `false`). It is an optional attribute.
+- `remove_subfolders` Indicates if empty subfolders to be deleted (default is `false`). It is an optional attribute.
 
 #### Example 1
 ```
