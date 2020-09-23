@@ -19,3 +19,12 @@ files_in_folder:
     except_extensions:
       description: List of extensions that are not allowed to be deleted. Cannot be combined with only_extensions.
       example: '.zip'
+    except_files:
+      description: List of files that are not allowed to be deleted.
+      example: 'important_file.zip'
+    scan_subfolders:
+      description: Indication if subfolders to be scanned. Default is 'false'.
+      example: true
+    remove_subfolders:
+      description: Indication if empty subfolders to be deleted. Default is 'false'.
+      example: true
