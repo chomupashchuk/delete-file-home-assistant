@@ -62,3 +62,15 @@ data:
     - '.zip'
     - '.yaml'
 ```
+
+```
+service: delete.files_in_folder
+data:
+  folder: "/config/test"
+  time: 0
+  scan_subfolders: true
+  remove_subfolders: true
+  except_files:
+    - 'important.txt'
+    - 'important.db'
+```
