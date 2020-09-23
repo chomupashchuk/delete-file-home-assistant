@@ -63,6 +63,7 @@ data:
     - '.yaml'
 ```
 
+#### Example 4
 ```
 service: delete.files_in_folder
 data:
