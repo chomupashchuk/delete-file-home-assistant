@@ -93,13 +93,14 @@ def setup(hass, config):
                         if remove_file:
                             _LOGGER.warning("Deleted {}".format(file_path))
                             os.remove(file_path)
-                            
-                for subfolder in instance_dirs:
-                    subfolder_path = os.path.join(instance_path, subfolder)
-                    if os.stat(subfolder_path).st_mtime < now - folder_time:
-                        if delete_folders:
-                            _LOGGER.warning("Deleted {}".format(subfolder_path))
-                            os.rmdir(subfolder_path)
+                  
+                if delete_folders:                  
+                    for subfolder in instance_dirs:
+                        subfolder_path = os.path.join(instance_path, subfolder)
+                        #if os.stat(subfolder_path).st_mtime < now - folder_time:
+
+                        _LOGGER.warning("Deleted {}".format(subfolder_path))
+                        os.rmdir(subfolder_path)
         
             #for file in os.listdir(folder_path):
             #    file_path = os.path.join(folder_path, file)
