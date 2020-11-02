@@ -35,8 +35,8 @@ def setup(hass, config):
             os.remove(file_path)
             _LOGGER.warning("Deleted {}".format(file_path))
         else:
-            _LOGGER.info("{} is not a file".format(file_path))
-            raise
+            _LOGGER.error("{} is not recognized as a file".format(file_path))
+            raise Exception("{} is not recognized as a file".format(file_path))
 
     def handle_delete_files_in_folder(call):
         """Handle the service call."""
@@ -62,8 +62,8 @@ def setup(hass, config):
             only_extensions = specified
         
         if only_extensions != [] and except_extensions != []:
-            _LOGGER.info("Not allowed to mix extensions both only allowed and excluded")
-            raise
+            _LOGGER.error("Not allowed to mix extensions both only allowed and excluded")
+            raise Exception("Not allowed to mix extensions both only allowed and excluded")
         
         if os.path.isdir(folder_path):
         
@@ -127,8 +127,8 @@ def setup(hass, config):
             #        elif os.path.isdir(file_path):
             #            _LOGGER.warning("Time is {}".format(os.stat(file_path).st_mtime))
         else:
-            _LOGGER.info("{} is not a folder".format(folder_path))
-            raise
+            _LOGGER.error("{} is not recognized as a folder".format(folder_path))
+            raise Exception("{} is not recognized as a folder".format(folder_path))
         
     hass.services.register(DOMAIN, SERVICE_FILE, handle_delete_file)
     hass.services.register(DOMAIN, SERVICE_FOLDER, handle_delete_files_in_folder)
