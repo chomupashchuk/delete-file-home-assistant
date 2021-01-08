@@ -16,6 +16,7 @@ delete:
 - `file` is used to indicate file path. it is a mandatory attribute.
 
 #### Example
+Delete file `photo.png` in folder `/config/image_snapshot`:
 ```
 service: delete.file
 data:
@@ -29,12 +30,13 @@ data:
 - `folder` is used to indicate folder path. it is a mandatory attribute.
 - `time` is used to indicate how old files must be  in seconds in order to be deleted. Default is 24 hours (86400 seconds). It is an optional attribute.
 - `only_extensions` is list of extensions of files that are allowed to be deleted. Cannot be used together with `except_extensions`. It is an optional attribute.
-- `except_extensions` is list of extensions of files that are not allowed to be deleted. Cannot be used together with `only_extensions`. It is an optional attribute.
-- `except_files` is list of files that are not allowed to be deleted. It is an optional attribute.
+- `except_extensions` is list of extensions of files that are not allowed to be deleted. Cannot be used together with `only_extensions`. Note: extension names must match exactly, they are case sensitive. It is an optional attribute.
+- `except_files` is list of files that are not allowed to be deleted. Note: file names and extensions must match exactly, they are case sensitive. It is an optional attribute.
 - `scan_subfolders` Indicates if subfolders to be scanned (default is `false`). It is an optional attribute.
 - `remove_subfolders` Indicates if empty subfolders to be deleted (default is `false`). It is an optional attribute.
 
 #### Example 1
+Delete files older than a week in folder `/config/image_snapshot/`:
 ```
 service: delete.files_in_folder
 data:
@@ -43,6 +45,7 @@ data:
 ```
 
 #### Example 2
+Delete files older than 24 hours with only extensions `png` and `jpg` (note that they are case sensitive and must match exactly) in folder `/config/image_snapshot/`:
 ```
 service: delete.files_in_folder
 data:
@@ -53,17 +56,19 @@ data:
 ```
 
 #### Example 3
+Delete files older than 1 hour except extensions `zip` and `yaml` (note that they are case sensitive and must match exactly) in folder `/config/image_snapshot/`:
 ```
 service: delete.files_in_folder
 data:
   folder: '/config/image_snapshot/'
-  time: 24000
+  time: 3600
   except_extensions:
     - '.zip'
     - '.yaml'
 ```
 
 #### Example 4
+Delete files (even if creates less than a second ago) including files in subfolders (empty subfolders shall also be removed) except `important.txt` and `important.db` files when scanning folder `/config/test`:
 ```
 service: delete.files_in_folder
 data:
