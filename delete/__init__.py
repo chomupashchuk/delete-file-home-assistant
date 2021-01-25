@@ -27,13 +27,31 @@ _LOGGER = logging.getLogger(__name__)
 def setup(hass, config):
     """Set up is called when Home Assistant is loading our component."""
     
+    def _rem_file(path):
+        try:
+            os.remove(path)
+            _LOGGER.warning("Deleted file {}".format(path))
+        except Exception as ex:
+            _LOGGER.error("File {} could not be deleted due to error (probably permission): {}".format(path, ex))
+    
+    def _rem_folder(path):
+        try:
+            os.rmdir(path)
+            _LOGGER.warning("Deleted empty folder {}".format(path))
+        except Exception as ex:
+            if ex.args[0] != 39:
+                _LOGGER.error("Folder {} could not be deleted due to error (probably permission): {}".format(path, ex))
+            else:
+                _LOGGER.info("Folder {} is not empty and cannot be deleted.".format(path))
+    
     def handle_delete_file(call):
         """Handle the service call."""
         file_path = call.data.get(ATTR_FILE, DEFAULT_FILE)
     
         if os.path.isfile(file_path):
-            os.remove(file_path)
-            _LOGGER.warning("Deleted {}".format(file_path))
+            _rem_file(file_path)
+        elif os.path.isdir(file_path):
+            _rem_folder(file_path)
         else:
             _LOGGER.error("{} is not recognized as a file".format(file_path))
             raise Exception("{} is not recognized as a file".format(file_path))
@@ -91,41 +109,14 @@ def setup(hass, config):
                             if file in except_files:
                                 remove_file = False
                         if remove_file:
-                            _LOGGER.warning("Deleted {}".format(file_path))
-                            os.remove(file_path)
+                            _rem_file(file_path)
                   
                 if delete_folders:                  
                     for subfolder in instance_dirs:
                         subfolder_path = os.path.join(instance_path, subfolder)
                         #if os.stat(subfolder_path).st_mtime < now - folder_time:
-
-                        _LOGGER.warning("Deleted {}".format(subfolder_path))
-                        os.rmdir(subfolder_path)
+                        _rem_folder(subfolder_path)
         
-            #for file in os.listdir(folder_path):
-            #    file_path = os.path.join(folder_path, file)
-            #    if os.stat(file_path).st_mtime < now - folder_time:
-            #        if os.path.isfile(file_path):
-            #            remove_file = True
-            #            if only_extensions != []:
-            #                remove_file = False
-            #                for extension in only_extensions:
-            #                    if file.endswith(extension):
-            #                        remove_file = True
-            #                        break
-            #            if except_extensions != []:
-            #                for extension in except_extensions:
-            #                    if file.endswith(extension):
-            #                        remove_file = False
-            #                        break
-            #            if except_files != []:
-            #                if file in except_files:
-            #                    remove_file = False
-            #            if remove_file:
-            #                _LOGGER.warning("Deleted {}".format(file_path))
-            #                os.remove(file_path)
-            #        elif os.path.isdir(file_path):
-            #            _LOGGER.warning("Time is {}".format(os.stat(file_path).st_mtime))
         else:
             _LOGGER.error("{} is not recognized as a folder".format(folder_path))
             raise Exception("{} is not recognized as a folder".format(folder_path))
