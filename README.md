@@ -3,8 +3,8 @@ Delete file service for Home Assistant. For example delete snapshots.
 
 ## WARNINGS
 - **All files and file extensions are case sensitive (e.g. `JPG` in not same as `jpg` or `jpeg`).**
-- **Custom component is run from Home Assistant and has access from same python runtime environment that means no access outside of Home Assistant visibility.**
-- **Home Assistant runs custom components not as `root` and thus permissions towards files and folders must be checked manually.**
+- **Custom component is run from Home Assistant and has access from same python runtime environment. It means no access outside of Home Assistant visibility (for example Hassio paths or folders).**
+- **Home Assistant runs custom components not as `root` and thus permissions towards files and folders must be checked manually as component cannot change to the user with higher privilidges.**
 
 ## Integration installation
 In `/config` folder create `custom_components` folder and load source files folder `delete` in it. In 'configuration.yaml' include:
