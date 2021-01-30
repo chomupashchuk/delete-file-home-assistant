@@ -48,6 +48,10 @@ def setup(hass, config):
         """Handle the service call."""
         file_path = call.data.get(ATTR_FILE, DEFAULT_FILE)
     
+        if file_path == DEFAULT_FILE:
+            _LOGGER.error("Value of 'file' was not detected. Check the syntax of the service.")
+            raise Exception("Value of 'file' was not detected. Check the syntax of the service.")
+    
         if os.path.isfile(file_path):
             _rem_file(file_path)
         elif os.path.isdir(file_path):
@@ -67,6 +71,10 @@ def setup(hass, config):
         delete_folders = call.data.get(ATTR_DEL_FOLDERS, False)
         now = time.time()
         
+        if folder_path == DEFAULT_FOLDER:
+            _LOGGER.error("Value of 'folder' was not detected. Check the syntax of the service.")
+            raise Exception("Value of 'folder' was not detected. Check the syntax of the service.")
+    
         except_extensions = []
         if isinstance(exceptions, str):
             except_extensions.append(exceptions)
