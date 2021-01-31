@@ -125,12 +125,12 @@ def setup(hass, config):
                         if only_extensions != []:
                             remove_file = False
                             for extension in only_extensions:
-                                if file.endswith(extension):
+                                if file.lower().endswith(extension.lower()):
                                     remove_file = True
                                     break
                         if except_extensions != []:
                             for extension in except_extensions:
-                                if file.endswith(extension):
+                                if file.lower().endswith(extension.lower()):
                                     remove_file = False
                                     break
                         if except_files != []:
