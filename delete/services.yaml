@@ -2,7 +2,7 @@ file:
   description: Delete the file or the empty folder
   fields:
     file:
-      description: The file of the empty folder to be deleted
+      description: The file or the empty folder to be deleted
       example: '/config/snapshot.jpg'
 files_in_folder:
   description: Delete files within the folder, where files are older then defined period of time
