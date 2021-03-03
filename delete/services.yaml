@@ -11,8 +11,8 @@ files_in_folder:
       description: Folder to be scanned for the files
       example: '/config/snapshots'
     time:
-      description: Threshold for how old files are (in seconds). Default is 3600 seconds.
-      example: 86400
+      description: Threshold for how old files are (in seconds). Default is 86400 seconds (24 hours).
+      example: 604800
     only_extensions:
       description: List of extensions that are allowed to be deleted. Cannot be combined with except_extensions.
       example: '.png'

@@ -19,7 +19,7 @@ EXCLUSIVE_GROUP = "extensions"
 SERVICE_FILE = "file"
 SERVICE_FOLDER = "files_in_folder"
 
-DEFAULT_TIME = 3600
+DEFAULT_TIME = 86400
 
 DOMAIN = "delete"
 
