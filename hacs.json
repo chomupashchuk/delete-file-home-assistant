@@ -1,7 +1,5 @@
 {
     "name": "Delete files and folders",
     "domains": ["delete"],
-    "render_readme": true,
-    "zip_release": true,
-    "filename": "1.6.zip"
+    "render_readme": true
 }
