@@ -1,6 +1,7 @@
 {
     "name": "Delete files and folders",
-    "content_in_root": true,
     "domains": ["delete"],
-    "render_readme": true
+    "render_readme": true,
+    "zip_release": true,
+    "filename": "1.6.zip"
 }
