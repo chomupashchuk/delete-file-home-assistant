@@ -1,0 +1,6 @@
+{
+    "name": "Delete files and folders",
+    "content_in_root": true,
+    "domains": ["delete"],
+    "render_readme": true
+  }
