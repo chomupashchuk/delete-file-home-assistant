@@ -1,5 +1,6 @@
 {
     "name": "Delete files and folders",
     "domains": ["delete"],
-    "render_readme": true
+    "render_readme": true,
+    "iot_class": ["Local Push"]
 }
