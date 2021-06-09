@@ -44,6 +44,7 @@ data:
 - `except_files` is list of files that are not allowed to be deleted. Note: file names and extensions must match exactly, they are case sensitive. It is an optional attribute.
 - `scan_subfolders` Indicates if subfolders to be scanned (default is `false`). It is an optional attribute.
 - `remove_subfolders` Indicates if empty subfolders to be deleted (default is `false`). It is an optional attribute.
+- `size` Indicates maximum folder size to be kept in Megabytes (value 0 disables this functionality). After checking last modification time additional check is made towards folder size. If it exceeds the specified value, then files are deleted even if specified time has not been exceeded. Files are deleted starting from the oldest file until the condition is met. It is an optional attribute.
 
 #### Example 1
 Delete files older than a week in folder `/config/image_snapshot/`:
