@@ -91,3 +91,18 @@ data:
     - 'important.txt'
     - 'important.db'
 ```
+
+#### Example 5
+Delete files (even if creates less than a second ago) including files in subfolders (empty subfolders shall also be removed) except `important.txt` and `important.db` files (nothe that names must match exactly and it is case sensitive) when scanning folder `/config/test`, folder size must be kept not higher than 100Mb:
+```
+service: delete.files_in_folder
+data:
+  folder: "/config/test"
+  time: 0
+  scan_subfolders: true
+  remove_subfolders: true
+  except_files:
+    - 'important.txt'
+    - 'important.db'
+  size: 100
+```
