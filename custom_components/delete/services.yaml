@@ -28,3 +28,6 @@ files_in_folder:
     remove_subfolders:
       description: Indication if empty subfolders to be deleted. Default is 'false'.
       example: true
+    size:
+      description: Desired maximum folder size in Mb (Megabytes). If specified or exceeded, then oldest files shall be deleted.
+      example: 100
