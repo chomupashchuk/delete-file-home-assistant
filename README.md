@@ -1,5 +1,5 @@
 # Delete files in Home Assistant
-Delete file service for Home Assistant. For example delete snapshots.
+Delete file service for Home Assistant. For example delete snapshots. Warnings are logged for deleted files for observability.
 
 ## WARNINGS
 - **All files are case sensitive.**
