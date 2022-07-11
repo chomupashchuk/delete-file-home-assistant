@@ -14,6 +14,7 @@ ATTR_EXCEPT_FILE = "except_files"
 ATTR_SCAN_FOLDERS = "scan_subfolders"
 ATTR_DEL_FOLDERS = "remove_subfolders"
 ATTR_SIZE = "size"
+ATTR_NO_WARN = "no_warn"
 
 EXCLUSIVE_GROUP = "extensions"
 
@@ -38,6 +39,7 @@ DELETE_FILES_SCHEMA = vol.Schema(
         vol.Optional(ATTR_EXCEPT_FILE, default=[]): vol.Any(cv.ensure_list, cv.string),
         vol.Optional(ATTR_SCAN_FOLDERS, default=False): cv.boolean,
         vol.Optional(ATTR_DEL_FOLDERS, default=False): cv.boolean,
+        vol.Optional(ATTR_NO_WARN, default=False): cv.boolean,
         vol.Optional(ATTR_SIZE, default=0): cv.positive_int,
         vol.Exclusive(ATTR_ONLY_EXT, EXCLUSIVE_GROUP): vol.Any(cv.ensure_list, cv.string),
         vol.Exclusive(ATTR_EXCEPT_EXT, EXCLUSIVE_GROUP): vol.Any(cv.ensure_list, cv.string),
@@ -50,17 +52,19 @@ _LOGGER = logging.getLogger(__name__)
 def setup(hass, config):
     """Set up is called when Home Assistant is loading our component."""
     
-    def _rem_file(path):
+    def _rem_file(path, no_warn=False):
         try:
             os.remove(path)
-            _LOGGER.warning("Deleted file {}".format(path))
+            if not no_warn:
+                _LOGGER.warning("Deleted file {}".format(path))
         except Exception as ex:
             _LOGGER.error("File {} could not be deleted due to error (probably permission): {}".format(path, ex))
     
-    def _rem_folder(path, error=False):
+    def _rem_folder(path, error=False, no_warn=False):
         try:
             os.rmdir(path)
-            _LOGGER.warning("Deleted empty folder {}".format(path))
+            if not no_warn:
+                _LOGGER.warning("Deleted empty folder {}".format(path))
         except Exception as ex:
             if ex.args[0] != 39:
                 _LOGGER.error("Folder {} could not be deleted due to error (probably permission): {}".format(path, ex))
@@ -73,11 +77,12 @@ def setup(hass, config):
     def handle_delete_file(call):
         """Handle the service call."""
         file_path = call.data.get(ATTR_FILE)
+        no_warnings = call.data.get(ATTR_NO_WARN)
     
         if os.path.isfile(file_path):
-            _rem_file(file_path)
+            _rem_file(file_path, no_warn=no_warnings)
         elif os.path.isdir(file_path):
-            _rem_folder(file_path, error=True)
+            _rem_folder(file_path, error=True, no_warn=no_warnings)
         else:
             _LOGGER.error("{} is not recognized as a file".format(file_path))
             raise Exception("{} is not recognized as a file".format(file_path))
@@ -92,6 +97,7 @@ def setup(hass, config):
         subfolders = call.data.get(ATTR_SCAN_FOLDERS)
         delete_folders = call.data.get(ATTR_DEL_FOLDERS)
         wanted_max_folder_size = call.data.get(ATTR_SIZE)
+        no_warnings = call.data.get(ATTR_NO_WARN)
         
         if type(except_files) is str:
             except_files = list(except_files)
@@ -150,7 +156,7 @@ def setup(hass, config):
                     if remove_file:
                         if file_time < now - folder_time:
                             total_size -= file_size
-                            _rem_file(file_path)
+                            _rem_file(file_path, no_warn=no_warnings)
                         else:
                             # Store potential candidates for removal
                             file_sizes_dict[file_path] = file_size
@@ -161,17 +167,17 @@ def setup(hass, config):
                     for subfolder in instance_dirs:
                         subfolder_path = os.path.join(instance_path, subfolder)
                         #if os.stat(subfolder_path).st_mtime < now - folder_time:
-                        _rem_folder(subfolder_path)
+                        _rem_folder(subfolder_path, no_warn=no_warnings)
 
             if file_time_dict and wanted_max_folder_size > 0 and total_size > wanted_max_folder_size:
-                _LOGGER.warning("Folder {} size still exceeds {} Mb and is equal to {} Mb".format(folder_path, wanted_max_folder_size, total_size))
+                _LOGGER.info("Folder {} size still exceeds {} Mb and is equal to {} Mb".format(folder_path, wanted_max_folder_size, total_size))
                 oldest_to_newest_files = sorted(file_time_dict, key=lambda k: file_time_dict[k])
                 for file_path in oldest_to_newest_files:
                     if total_size <= wanted_max_folder_size:
                         break
                     total_size -= file_sizes_dict[file_path]
-                    _rem_file(file_path)
-                _LOGGER.warning("Folder {} final size is {} Mb".format(folder_path, total_size))
+                    _rem_file(file_path, no_warn=no_warnings)
+                _LOGGER.info("Folder {} final size is {} Mb".format(folder_path, total_size))
 
         else:
             _LOGGER.error("{} is not recognized as a folder".format(folder_path))

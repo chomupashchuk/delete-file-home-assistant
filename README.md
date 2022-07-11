@@ -24,6 +24,7 @@ Order of actions:
 
 #### attributes:
 - `file` is used to indicate file path. it is a mandatory attribute.
+- `no_warn` indicates if warnings are generated (default is `false` meaning warnings are included in the log).
 
 #### Example
 Delete file `photo.png` in folder `/config/image_snapshot`:
@@ -45,6 +46,7 @@ data:
 - `scan_subfolders` Indicates if subfolders to be scanned (default is `false`). It is an optional attribute.
 - `remove_subfolders` Indicates if empty subfolders to be deleted (default is `false`). It is an optional attribute.
 - `size` Indicates maximum folder size to be kept in Megabytes (value 0 disables this functionality). After checking last modification time additional check is made towards folder size. If it exceeds the specified value, then files are deleted even if specified time has not been exceeded. Files are deleted starting from the oldest file until the condition is met. It is an optional attribute.
+- `no_warn` indicates if warnings are generated (default is `false` meaning warnings are included in the log).
 
 #### Example 1
 Delete files older than a week in folder `/config/image_snapshot/`:
@@ -105,4 +107,20 @@ data:
     - 'important.txt'
     - 'important.db'
   size: 100
+```
+
+#### Example 6
+Delete files (even if creates less than a second ago) including files in subfolders (empty subfolders shall also be removed) except `important.txt` and `important.db` files (nothe that names must match exactly and it is case sensitive) when scanning folder `/config/test`, folder size must be kept not higher than 100Mb, no warnings generated in the log for removed files:
+```
+service: delete.files_in_folder
+data:
+  folder: "/config/test"
+  time: 0
+  scan_subfolders: true
+  remove_subfolders: true
+  except_files:
+    - 'important.txt'
+    - 'important.db'
+  size: 100
+  no_warn: true
 ```

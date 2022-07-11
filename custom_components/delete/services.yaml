@@ -4,6 +4,9 @@ file:
     file:
       description: The file or the empty folder to be deleted
       example: '/config/snapshot.jpg'
+    no_warn:
+      description: Indication if to disable warnings in logs.
+      example: true
 files_in_folder:
   description: Delete files within the folder, where files are older then defined period of time
   fields:
@@ -31,3 +34,6 @@ files_in_folder:
     size:
       description: Desired maximum folder size in Mb (Megabytes). If specified or exceeded, then oldest files shall be deleted.
       example: 100
+    no_warn:
+      description: Indication if to disable warnings in logs.
+      example: true
