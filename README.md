@@ -8,6 +8,17 @@ Delete file service for Home Assistant. For example delete snapshots. Warnings a
 - **Integration should delete data only within specified parameters so removal of unwanted files is users responsibility (correct specification of names).**
 
 ## Integration installation
+
+### With HACS
+- Go to */hacs/entry to open the Home Assistant Community Store
+- Select “Integrations”
+- Click the three dots in the top right corner and select “Custom Repositories”
+- Add URL https://github.com/chomupashchuk/delete-file-home-assistant and select category as “Integration”
+- Go to */config/server_control and select “Restart”
+- Add the line “delete:” to the file /config/configuration.yaml
+- Go to /config/server_control to check configuration and then restart server
+
+### Manual
 In `/config` folder create `custom_components` folder and load source files folder `delete` in it. In 'configuration.yaml' include:
 ```
 delete:
