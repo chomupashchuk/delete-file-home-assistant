@@ -4,6 +4,7 @@ import logging
 
 import voluptuous as vol
 import homeassistant.helpers.config_validation as cv
+from homeassistant.util.dt import parse_duration
 
 ATTR_FILE = "file"
 ATTR_FOLDER = "folder"
@@ -21,7 +22,7 @@ EXCLUSIVE_GROUP = "extensions"
 SERVICE_FILE = "file"
 SERVICE_FOLDER = "files_in_folder"
 
-DEFAULT_TIME = 86400
+DEFAULT_TIME = "24:00:00"
 
 DOMAIN = "delete"
 
@@ -35,7 +36,7 @@ DELETE_FILE_SCHEMA = vol.Schema(
 DELETE_FILES_SCHEMA = vol.Schema(   
     {
         vol.Required(ATTR_FOLDER, msg='Mandatory key "folder" is missing.'): cv.isdir,
-        vol.Optional(ATTR_TIME, default=DEFAULT_TIME): cv.positive_int,
+        vol.Optional(ATTR_TIME, default=DEFAULT_TIME): vol.Any(cv.positive_int, cv.string),
         vol.Optional(ATTR_EXCEPT_FILE, default=[]): vol.Any(cv.ensure_list, cv.string),
         vol.Optional(ATTR_SCAN_FOLDERS, default=False): cv.boolean,
         vol.Optional(ATTR_DEL_FOLDERS, default=False): cv.boolean,
@@ -57,6 +58,8 @@ def setup(hass, config):
             os.remove(path)
             if not no_warn:
                 _LOGGER.warning("Deleted file {}".format(path))
+            else:
+                _LOGGER.info("Deleted file {}".format(path))
         except Exception as ex:
             _LOGGER.error("File {} could not be deleted due to error (probably permission): {}".format(path, ex))
     
@@ -65,6 +68,8 @@ def setup(hass, config):
             os.rmdir(path)
             if not no_warn:
                 _LOGGER.warning("Deleted empty folder {}".format(path))
+            else:
+                _LOGGER.info("Deleted empty folder {}".format(path))
         except Exception as ex:
             if ex.args[0] != 39:
                 _LOGGER.error("Folder {} could not be deleted due to error (probably permission): {}".format(path, ex))
@@ -76,6 +81,7 @@ def setup(hass, config):
     
     def handle_delete_file(call):
         """Handle the service call."""
+        _LOGGER.debug(f"handle_delete_file: {call}")
         file_path = call.data.get(ATTR_FILE)
         no_warnings = call.data.get(ATTR_NO_WARN)
     
@@ -89,6 +95,7 @@ def setup(hass, config):
 
     def handle_delete_files_in_folder(call):
         """Handle the service call."""
+        _LOGGER.debug(f"handle_delete_files_in_folder: {call}")
         folder_path = call.data.get(ATTR_FOLDER)
         folder_time = call.data.get(ATTR_TIME)
         except_extensions = call.data.get(ATTR_EXCEPT_EXT)
@@ -99,6 +106,10 @@ def setup(hass, config):
         wanted_max_folder_size = call.data.get(ATTR_SIZE)
         no_warnings = call.data.get(ATTR_NO_WARN)
         
+        if (type(folder_time) is str):
+            folder_time = parse_duration(folder_time).total_seconds()
+        _LOGGER.info(f"Deleting files older than {folder_time} seconds")
+
         if type(except_files) is str:
             except_files = list(except_files)
         
@@ -115,75 +126,71 @@ def setup(hass, config):
             only_extensions = list(only_extensions)
         
         now = time.time()
-        
-        # if only_extensions != [] and except_extensions != []:
-        #     _LOGGER.error("Not allowed to mix allowed and excluded extensions.")
-        #     raise Exception("Not allowed to mix allowed and excluded extensions.")
-        
-        if os.path.isdir(folder_path):
-        
-            total_size = 0
-            file_sizes_dict = dict()
-            file_time_dict = dict()
-
-            for instance_path, instance_dirs, instance_files in os.walk(folder_path, topdown=False):
-            
-                for file in instance_files:
-
-                    file_path = os.path.join(instance_path, file)
-                    file_size = os.stat(file_path).st_size /1024 / 1024
-                    file_time = os.stat(file_path).st_mtime
-                    total_size += file_size
-
-                    if not subfolders and instance_path != folder_path:
-                        continue
-
-                    remove_file = True
-                    if only_extensions != []:
-                        remove_file = False
-                        for extension in only_extensions:
-                            if file.lower().endswith(extension.lower()):
-                                remove_file = True
-                                break
-                    if except_extensions != []:
-                        for extension in except_extensions:
-                            if file.lower().endswith(extension.lower()):
-                                remove_file = False
-                                break
-                    if except_files != []:
-                        if file in except_files:
-                            remove_file = False
-                    if remove_file:
-                        if file_time < now - folder_time:
-                            total_size -= file_size
-                            _rem_file(file_path, no_warn=no_warnings)
-                        else:
-                            # Store potential candidates for removal
-                            file_sizes_dict[file_path] = file_size
-                            file_time_dict[file_path] = file_time
-
-                  
-                if delete_folders:                  
-                    for subfolder in instance_dirs:
-                        subfolder_path = os.path.join(instance_path, subfolder)
-                        #if os.stat(subfolder_path).st_mtime < now - folder_time:
-                        _rem_folder(subfolder_path, no_warn=no_warnings)
-
-            if file_time_dict and wanted_max_folder_size > 0 and total_size > wanted_max_folder_size:
-                _LOGGER.info("Folder {} size still exceeds {} Mb and is equal to {} Mb".format(folder_path, wanted_max_folder_size, total_size))
-                oldest_to_newest_files = sorted(file_time_dict, key=lambda k: file_time_dict[k])
-                for file_path in oldest_to_newest_files:
-                    if total_size <= wanted_max_folder_size:
-                        break
-                    total_size -= file_sizes_dict[file_path]
-                    _rem_file(file_path, no_warn=no_warnings)
-                _LOGGER.info("Folder {} final size is {} Mb".format(folder_path, total_size))
-
-        else:
+                
+        if not os.path.isdir(folder_path):
             _LOGGER.error("{} is not recognized as a folder".format(folder_path))
             raise Exception("{} is not recognized as a folder".format(folder_path))
+
+        total_size = 0
+        file_sizes_dict = dict()
+        file_time_dict = dict()
+
+        for instance_path, instance_dirs, instance_files in os.walk(folder_path, topdown=False):
+        
+            for file in instance_files:
+
+                file_path = os.path.join(instance_path, file)
+                file_size = os.stat(file_path).st_size /1024 / 1024
+                file_time = os.stat(file_path).st_mtime
+                total_size += file_size
+
+                if not subfolders and instance_path != folder_path:
+                    continue
+
+                remove_file = True
+                if only_extensions != []:
+                    remove_file = False
+                    for extension in only_extensions:
+                        if file.lower().endswith(extension.lower()):
+                            remove_file = True
+                            break
+                if except_extensions != []:
+                    for extension in except_extensions:
+                        if file.lower().endswith(extension.lower()):
+                            remove_file = False
+                            break
+                if except_files != []:
+                    if file in except_files:
+                        remove_file = False
+                if remove_file:
+                    if file_time < now - folder_time:
+                        total_size -= file_size
+                        _rem_file(file_path, no_warn=no_warnings)
+                    else:
+                        # Store potential candidates for removal
+                        file_sizes_dict[file_path] = file_size
+                        file_time_dict[file_path] = file_time
+
+                
+            if delete_folders:                  
+                for subfolder in instance_dirs:
+                    subfolder_path = os.path.join(instance_path, subfolder)
+                    #if os.stat(subfolder_path).st_mtime < now - folder_time:
+                    _rem_folder(subfolder_path, no_warn=no_warnings)
+
+        if file_time_dict and wanted_max_folder_size > 0 and total_size > wanted_max_folder_size:
+            _LOGGER.info("Folder {} size still exceeds {} Mb and is equal to {} Mb".format(folder_path, wanted_max_folder_size, total_size))
+            oldest_to_newest_files = sorted(file_time_dict, key=lambda k: file_time_dict[k])
+            for file_path in oldest_to_newest_files:
+                if total_size <= wanted_max_folder_size:
+                    break
+                total_size -= file_sizes_dict[file_path]
+                _rem_file(file_path, no_warn=no_warnings)
+            _LOGGER.info("Folder {} final size is {} Mb".format(folder_path, total_size))
+
         
     hass.services.register(DOMAIN, SERVICE_FILE, handle_delete_file, schema=DELETE_FILE_SCHEMA)
     hass.services.register(DOMAIN, SERVICE_FOLDER, handle_delete_files_in_folder, schema=DELETE_FILES_SCHEMA)
+    _LOGGER.debug("delete integration is ready")
     # Return boolean to indicate that initialization was successful.
     return True

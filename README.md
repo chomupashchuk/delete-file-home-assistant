@@ -39,7 +39,7 @@ data:
 
 #### attributes:
 - `folder` is used to indicate folder path. it is a mandatory attribute.
-- `time` is used to indicate how old files must be  in seconds in order to be deleted. Default is 24 hours (86400 seconds). It is an optional attribute.
+- `time` is used to indicate how old files must be in order to be deleted. The time format is `DD HH:MM:SS` or number of seconds. Default is 24 hours. It is an optional attribute.
 - `only_extensions` is list of extensions of files that are allowed to be deleted. Cannot be used together with `except_extensions`. Note: extension names must match exactly. It is an optional attribute.
 - `except_extensions` is list of extensions of files that are not allowed to be deleted. Cannot be used together with `only_extensions`. Note: extension names must match exactly. It is an optional attribute.
 - `except_files` is list of files that are not allowed to be deleted. Note: file names and extensions must match exactly, they are case sensitive. It is an optional attribute.
@@ -54,7 +54,7 @@ Delete files older than a week in folder `/config/image_snapshot/`:
 service: delete.files_in_folder
 data:
   folder: '/config/image_snapshot/'
-  time: 604800
+  time: '7 00:00:00'
 ```
 
 #### Example 2
@@ -74,7 +74,7 @@ Delete files older than 1 hour except extensions `zip` and `yaml` (note that the
 service: delete.files_in_folder
 data:
   folder: '/config/image_snapshot/'
-  time: 3600
+  time: '01:00:00'
   except_extensions:
     - '.zip'
     - '.yaml'
@@ -86,7 +86,7 @@ Delete files (even if creates less than a second ago) including files in subfold
 service: delete.files_in_folder
 data:
   folder: "/config/test"
-  time: 0
+  time: '00:00:00'
   scan_subfolders: true
   remove_subfolders: true
   except_files:
@@ -100,7 +100,7 @@ Delete files (even if creates less than a second ago) including files in subfold
 service: delete.files_in_folder
 data:
   folder: "/config/test"
-  time: 0
+  time: '00:00:00'
   scan_subfolders: true
   remove_subfolders: true
   except_files:
@@ -115,7 +115,7 @@ Delete files (even if creates less than a second ago) including files in subfold
 service: delete.files_in_folder
 data:
   folder: "/config/test"
-  time: 0
+  time: '00:00:00'
   scan_subfolders: true
   remove_subfolders: true
   except_files:
